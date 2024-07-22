@@ -18,3 +18,17 @@ export const addProduct: RequestHandler = async (
     next(error);
   }
 };
+
+export const getProducts: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const allProducts = await Product.find();
+
+    res.status(200).json(allProducts);
+  } catch (err) {
+    next(err);
+  }
+};
