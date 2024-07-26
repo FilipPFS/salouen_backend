@@ -17,7 +17,7 @@ interface CartProductSchema extends Document {
 }
 
 export interface UserSchema {
-  name: string;
+  firstName: string;
   lastName: string;
   email: string;
   password: string;
@@ -71,7 +71,7 @@ const cartProductSchema = new mongoose.Schema<CartProductSchema>({
 });
 
 const userSchema = new mongoose.Schema<UserSchema>({
-  name: {
+  firstName: {
     type: String,
     required: true,
   },

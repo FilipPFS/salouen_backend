@@ -12,6 +12,8 @@ const app = express();
 
 const userRoutes = require("./routes/user");
 const productRoutes = require("./routes/product");
+const cartRoutes = require("./routes/cart");
+const topProductRoutes = require("./routes/topProduct");
 
 app.use(cors());
 app.use(express.json());
@@ -25,6 +27,8 @@ mongoose
 
 app.use("/api/auth", userRoutes);
 app.use("/api/product", productRoutes);
+app.use("/api/cart", cartRoutes);
+app.use("/api/topProduct", topProductRoutes);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({ message: err.message });
