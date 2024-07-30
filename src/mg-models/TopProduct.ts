@@ -6,6 +6,7 @@ export interface TopProductTypes {
   img: string;
   oldPrice: number;
   newPrice: number;
+  stock: number;
 }
 
 interface TopProductSchema extends TopProductTypes, Document {}
@@ -28,6 +29,10 @@ const topProductSchema = new mongoose.Schema<TopProductSchema>({
     required: true,
   },
   newPrice: {
+    type: Number,
+    required: true,
+  },
+  stock: {
     type: Number,
     required: true,
   },

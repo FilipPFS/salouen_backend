@@ -1,10 +1,18 @@
 import { Router } from "express";
-import { addTopProduct, getTopProducts } from "../handlers/topProduct";
+import {
+  addTopProduct,
+  deleteTopProduct,
+  getTopProducts,
+  updateTopProduct,
+} from "../handlers/topProduct";
+import authMiddleware from "../middlewares/auth";
 
 const express = require("express");
 const router: Router = express.Router();
 
-router.post("/", addTopProduct);
+router.post("/", authMiddleware, addTopProduct);
 router.get("/", getTopProducts);
+router.delete("/:id", authMiddleware, deleteTopProduct);
+router.put("/:id", authMiddleware, updateTopProduct);
 
 module.exports = router;

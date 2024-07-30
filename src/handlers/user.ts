@@ -1,102 +1,97 @@
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import User, { UserSchema } from "../mg-models/User";
 import { NextFunction, Request, RequestHandler, Response } from "express";
+import User from "../mg-models/User";
 
-interface SignUpSchema {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-}
-
-interface LoginSchema {
-  email: string;
-  password: string;
-}
-
-export const signup: RequestHandler = async (
-  req: Request<{}, {}, SignUpSchema>,
+export const getUserInfo: RequestHandler = async (
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const { firstName, lastName, email, password } = req.body;
+    const { id } = req.params;
+    const user = await User.findById(id);
 
-    const existingMail = await User.findOne({ email: email });
-
-    if (existingMail) {
-      return res
-        .status(401)
-        .json(
-          "Une erreur est survenue lors de la création. Ressayez ultérieurement."
-        );
-    }
-
-    if (!firstName || !lastName || !email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Username, email, and password are required." });
-    }
-    const hashedPass = await bcrypt.hash(password, 10);
-
-    const user = new User<UserSchema>({
-      firstName,
-      lastName,
-      email,
-      password: hashedPass,
-      isAdmin: false,
-    });
-
-    await user.save();
-
-    res.status(201).json({ message: "User created successfully." });
-  } catch (error) {
-    next(error);
+    res.status(200).json(user);
+  } catch (err) {
+    next(err);
   }
 };
 
-export const login: RequestHandler = async (
-  req: Request<{}, {}, LoginSchema>,
+export const getAllUsers: RequestHandler = async (
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const { email, password } = req.body;
+    const users = await User.find();
 
-    if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Email and password are required." });
+    res.status(200).json(users);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const setUserAdmin: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      res.status(404).json({ message: "User not found." });
     }
 
-    const user = await User.findOne({ email: email });
+    if (user?.isAdmin === true) {
+      res.status(400).json({ message: "User already have admin role." });
+    }
 
-    if (user === null) {
+    if (user) {
+      user.isAdmin = true;
+    }
+
+    await user?.save();
+
+    const users = await User.find();
+
+    res.status(201).json({
+      message: `User ${user?.firstName} ${user?.lastName} is now admin.`,
+      users,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const removeUserAdmin: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      res.status(404).json({ message: "User not found." });
+    }
+
+    if (user?.id === "669f9e5fc0776c15707878a0") {
       res
-        .status(401)
-        .json({ message: "Paire identifiant/mot de passe est incorrect." });
-    } else {
-      const thePass = await bcrypt.compare(password, user.password);
-      if (!thePass) {
-        res
-          .status(401)
-          .json({ message: "Paire identifiant/mot de passe est incorrect." });
-      } else {
-        res.status(200).json({
-          userId: user._id,
-          isAdmin: user.isAdmin,
-          token: jwt.sign(
-            { userId: user._id, isAdmin: user.isAdmin },
-            "RANDOM_TOKEN_SECRET",
-            {
-              expiresIn: "24h",
-            }
-          ),
-        });
-      }
+        .status(400)
+        .json({ message: "You can not remove the admin role from this user." });
+      return;
     }
-  } catch (error) {
-    next(error);
+
+    if (user) {
+      user.isAdmin = false;
+    }
+
+    await user?.save();
+
+    res.status(200).json({
+      message: `User ${user?.firstName} ${user?.lastName} is no longer admin.`,
+    });
+  } catch (err) {
+    next(err);
   }
 };

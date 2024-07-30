@@ -1,11 +1,18 @@
 import { Router } from "express";
-import { signup } from "../handlers/user";
-import { login } from "../handlers/user";
+import {
+  getAllUsers,
+  getUserInfo,
+  removeUserAdmin,
+  setUserAdmin,
+} from "../handlers/user";
+import authMiddleware from "../middlewares/auth";
 
 const express = require("express");
 const router: Router = express.Router();
 
-router.post("/signup", signup);
-router.post("/login", login);
+router.get("/", getAllUsers);
+router.get("/:id", getUserInfo);
+router.post("/set-admin/:id", authMiddleware, setUserAdmin);
+router.post("/remove-admin/:id", authMiddleware, removeUserAdmin);
 
 module.exports = router;
