@@ -69,14 +69,9 @@ export const updateTopProduct: RequestHandler = async (req, res, next) => {
 
     const { title, description, newPrice, oldPrice, stock } = req.body;
 
-    // Validate and parse numerical fields
     const parsedNewPrice = parseInt(newPrice, 10);
     const parsedOldPrice = parseInt(oldPrice, 10);
     const parsedStock = parseInt(stock, 10);
-
-    if (isNaN(parsedNewPrice) || isNaN(parsedOldPrice) || isNaN(parsedStock)) {
-      return res.status(400).json({ message: "Invalid numerical value" });
-    }
 
     const updatedData = {
       title,

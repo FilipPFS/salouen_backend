@@ -14,6 +14,6 @@ const router: Router = express.Router();
 router.post("/", upload, optimized, authMiddleware, addProduct);
 router.get("/", getProducts);
 router.delete("/:id", authMiddleware, deleteProduct);
-router.put("/:id", authMiddleware, updateProduct);
+router.put("/:id", upload, optimized, authMiddleware, updateProduct);
 
 module.exports = router;

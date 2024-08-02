@@ -1,6 +1,7 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import Product, { ProductTypes } from "../mg-models/Product";
 import fs from "fs";
+import path from "path";
 
 export const addProduct: RequestHandler = async (
   req: Request,
@@ -70,20 +71,62 @@ export const updateProduct: RequestHandler = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
-    const updateData = req.body;
+    const { title, description, price, stock, category, inStock } = req.body;
 
-    const updatedProduct = await Product.findByIdAndUpdate(id, updateData, {
-      new: true,
-      runValidators: true,
-    });
+    const parsedPrice = parseInt(price, 10);
+    const parsedStock = parseInt(stock, 10);
 
-    if (!updatedProduct) {
+    const updatedData = {
+      title,
+      description,
+      category,
+      inStock,
+      price: parsedPrice,
+      stock: parsedStock,
+    };
+
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
 
+    const trimmedImageUrl = product.img.split("/images/")[1];
+    console.log("url", trimmedImageUrl);
+
+    let productObject;
+
+    if (req.file) {
+      productObject = {
+        ...updatedData,
+        img: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
+      };
+
+      const oldImagePath = path.join("images", trimmedImageUrl);
+      fs.unlink(oldImagePath, (err) => {
+        if (err) {
+          console.error("Error lors de la suppression:", err);
+        } else {
+          console.log("Old image deleted successfully");
+        }
+      });
+    } else {
+      productObject = { ...updatedData, img: product.img };
+    }
+
+    // Update the product
+    const updatedProduct = await Product.findByIdAndUpdate(
+      req.params.id,
+      { $set: productObject },
+      { new: true }
+    );
+
+    if (!updatedProduct) {
+      return res.status(404).json({ message: "Failed to update product" });
+    }
+
     res.status(200).json(updatedProduct);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 };
