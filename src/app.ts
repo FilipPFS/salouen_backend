@@ -7,6 +7,7 @@ import express, {
 
 import mongoose from "mongoose";
 import cors from "cors";
+import path from "path";
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use("/api/product", productRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/topProduct", topProductRoutes);
 app.use("/api/user", userRoutes);
+app.use("/images", express.static(path.join(__dirname, "../images")));
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({ message: err.message });
