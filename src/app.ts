@@ -8,6 +8,7 @@ import express, {
 import mongoose from "mongoose";
 import cors from "cors";
 import path from "path";
+const stripe = require("stripe")(process.env.STRIPE_KEY);
 
 const app = express();
 
@@ -16,7 +17,11 @@ const productRoutes = require("./routes/product");
 const cartRoutes = require("./routes/cart");
 const topProductRoutes = require("./routes/topProduct");
 const userRoutes = require("./routes/user");
+const checkRoutes = require("./routes/checkout");
+const webhookRoutes = require("./routes/webhook");
 
+app.use("/webhook", express.raw({ type: "application/json" }));
+app.use("/webhook", webhookRoutes);
 app.use(cors());
 app.use(express.json());
 
@@ -27,6 +32,7 @@ mongoose
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch((err) => console.log("Connexion à MongoDB échouée !", err));
 
+app.use("/", checkRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/product", productRoutes);
 app.use("/api/cart", cartRoutes);

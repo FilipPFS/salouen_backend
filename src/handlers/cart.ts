@@ -131,3 +131,28 @@ export const decreaseCartQuantity: RequestHandler = async (
     return res.status(500).json({ message: "Server error" });
   }
 };
+
+export const clearFullCart: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { userId } = req.params;
+
+  try {
+    const result = await User.findByIdAndUpdate(
+      userId,
+      { $set: { cart: [] } },
+      { new: true }
+    );
+
+    if (!result) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ message: "Cart cleared successfully", user: result });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
+  }
+};

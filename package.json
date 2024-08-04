@@ -14,13 +14,15 @@
     "@types/multer": "^1.4.11",
     "@types/sharp": "^0.32.0",
     "bcryptjs": "^2.4.3",
-    "body-parser": "^1.19.0",
+    "body-parser": "^1.20.2",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^4.17.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.1",
     "multer": "^1.4.5-lts.1",
-    "sharp": "^0.33.4"
+    "sharp": "^0.33.4",
+    "stripe": "^16.6.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
