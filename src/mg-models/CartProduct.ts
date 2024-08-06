@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-interface CartProductSchema extends Document {
+export interface CartProductSchema extends Document {
   productId: mongoose.Schema.Types.ObjectId;
   img: string;
   title: string;
@@ -8,7 +8,7 @@ interface CartProductSchema extends Document {
   price: number;
 }
 
-const cartProductSchema = new mongoose.Schema<CartProductSchema>({
+export const cartProductSchema = new mongoose.Schema<CartProductSchema>({
   productId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Product",

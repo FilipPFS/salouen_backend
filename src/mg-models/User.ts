@@ -20,6 +20,7 @@ export interface UserSchema {
   firstName: string;
   lastName: string;
   email: string;
+  phoneNumber?: string;
   password: string;
   isAdmin: boolean;
   address?: AddressSchema;
@@ -91,6 +92,10 @@ const userSchema = new mongoose.Schema<UserSchema>({
   isAdmin: {
     type: Boolean,
     default: false,
+  },
+  phoneNumber: {
+    type: String,
+    required: false,
   },
   address: {
     type: addressSchema,

@@ -19,6 +19,7 @@ const topProductRoutes = require("./routes/topProduct");
 const userRoutes = require("./routes/user");
 const checkRoutes = require("./routes/checkout");
 const webhookRoutes = require("./routes/webhook");
+const commandRoutes = require("./routes/command");
 
 app.use("/webhook", express.raw({ type: "application/json" }));
 app.use("/webhook", webhookRoutes);
@@ -38,6 +39,7 @@ app.use("/api/product", productRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/topProduct", topProductRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/commands", commandRoutes);
 app.use("/images", express.static(path.join(__dirname, "../images")));
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

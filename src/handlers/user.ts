@@ -95,3 +95,58 @@ export const removeUserAdmin: RequestHandler = async (
     next(err);
   }
 };
+
+export const addUserAdress: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      res.status(404).json({ message: "User not found." });
+    }
+
+    if (user) {
+      user.address = { ...req.body };
+    }
+
+    await user?.save();
+
+    res.status(201).json({
+      user,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateUserAddress: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    if (req.body) {
+      user.address = { ...req.body };
+    } else {
+      return res.status(400).json({ message: "Address data is required." });
+    }
+
+    await user.save();
+
+    res.status(200).json({
+      message: "Address updated successfully.",
+      user,
+    });
+  } catch (err) {
+    next(err);
+  }
+};

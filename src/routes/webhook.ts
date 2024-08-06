@@ -2,6 +2,7 @@ import { Request, Response, Router } from "express";
 import User from "../mg-models/User";
 import Stripe from "stripe";
 import bodyParser from "body-parser";
+import Command from "../mg-models/Command.";
 
 require("dotenv").config();
 const express = require("express");
@@ -28,11 +29,39 @@ router.post("/", (req, res) => {
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
 
-    handleCheckoutSession(session);
+    (async () => {
+      await createNewCommand(session);
+      handleCheckoutSession(session);
+    })();
   }
 
   res.json({ received: true });
 });
+
+const createNewCommand = async (session: Stripe.Checkout.Session) => {
+  const userId = session.metadata?.userId;
+  if (!userId) {
+    console.error("No user ID in session metadata");
+    return;
+  }
+
+  try {
+    const user = await User.findById(userId);
+
+    const newComamnd = new Command({
+      userId: userId,
+      email: user?.email,
+      products: user?.cart,
+      amount: user?.cart?.reduce((total, item) => total + item.price, 0) || 0,
+    });
+
+    await newComamnd.save();
+
+    console.log("Successfully created new command.");
+  } catch (error) {
+    console.error("Error updating user cart:", error);
+  }
+};
 
 const handleCheckoutSession = async (session: Stripe.Checkout.Session) => {
   const userId = session.metadata?.userId;
