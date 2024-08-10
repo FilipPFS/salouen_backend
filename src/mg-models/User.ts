@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { CartPdt } from "../models/todos";
 
-interface AddressSchema {
+export interface AddressSchema {
   number: number;
   street: string;
   city: string;

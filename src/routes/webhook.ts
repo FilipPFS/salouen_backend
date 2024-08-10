@@ -53,6 +53,7 @@ const createNewCommand = async (session: Stripe.Checkout.Session) => {
       email: user?.email,
       products: user?.cart,
       amount: user?.cart?.reduce((total, item) => total + item.price, 0) || 0,
+      address: user?.address,
     });
 
     await newComamnd.save();
