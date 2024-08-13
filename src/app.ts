@@ -20,6 +20,7 @@ const userRoutes = require("./routes/user");
 const checkRoutes = require("./routes/checkout");
 const webhookRoutes = require("./routes/webhook");
 const commandRoutes = require("./routes/command");
+require("dotenv").config();
 
 app.use("/webhook", express.raw({ type: "application/json" }));
 app.use("/webhook", webhookRoutes);
@@ -27,9 +28,7 @@ app.use(cors());
 app.use(express.json());
 
 mongoose
-  .connect(
-    "mongodb+srv://filipPbg:petrovic123@cluster0.2a9vmjz.mongodb.net/e-commerce?retryWrites=true&w=majority&appName=Cluster0"
-  )
+  .connect(process.env.MONGO_URI!)
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch((err) => console.log("Connexion à MongoDB échouée !", err));
 

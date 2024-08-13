@@ -8,6 +8,7 @@ interface SignUpSchema {
   lastName: string;
   email: string;
   password: string;
+  phoneNumber: string;
 }
 
 interface LoginSchema {
@@ -21,7 +22,7 @@ export const signup: RequestHandler = async (
   next: NextFunction
 ) => {
   try {
-    const { firstName, lastName, email, password } = req.body;
+    const { firstName, lastName, email, password, phoneNumber } = req.body;
 
     const existingMail = await User.findOne({ email: email });
 
@@ -45,6 +46,7 @@ export const signup: RequestHandler = async (
       lastName,
       email,
       password: hashedPass,
+      phoneNumber,
       isAdmin: false,
     });
 
